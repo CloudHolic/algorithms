@@ -1,73 +1,38 @@
 #include "stack.h"
 
 template <typename T>
-stack<T>::stack()
-{
-
-}
-
-template <typename T>
-stack<T>::stack(const stack<T>& prev)
-{
-
-}
-
-template <typename T>
-stack<T>::stack(stack<T>&& prev) noexcept
-{
-
-}
-
-template <typename T>
-stack<T>::~stack()
-{
-
-}
-
-template <typename T>
 stack<T>& stack<T>::operator+=(T value)
 {
-
+    push(value);
+    return *this;
 }
 
 template <typename T>
-stack<T>& stack<T>::operator=(const stack<T>& prev)
+void stack<T>::push(const T value) const
 {
-
+    internal_data_.insert(0, value);
 }
 
 template <typename T>
-stack<T>& stack<T>::operator=(stack<T>&& prev) noexcept
+T stack<T>::pop() const
 {
-
+    internal_data_.remove(0);
 }
 
 template <typename T>
-void stack<T>::push(T value)
+T stack<T>::peak() const
 {
-
-}
-
-template <typename T>
-T stack<T>::pop()
-{
-
-}
-
-template <typename T>
-T stack<T>::peak()
-{
-
+    return internal_data_[0];
 }
 
 template <typename T>
 int stack<T>::size() const
 {
-
+    return internal_data_.size();
 }
 
 template <typename T>
-void stack<T>::clear()
+void stack<T>::clear() const
 {
-
+    internal_data_.clear();
 }

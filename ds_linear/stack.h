@@ -6,26 +6,16 @@ template <typename T>
 class stack
 {
 public:
-	// Constructors
-	stack();
-	stack(const stack<T>& prev);
-	stack(stack<T>&& prev) noexcept;
-
-	// Destructor
-	~stack();
-
 	// Operator overloading
 	stack& operator+=(T value);
-	stack& operator=(const stack<T>& prev);
-	stack& operator=(stack<T>&& prev) noexcept;
 
 	// Other methods
-	void push(T value);
-	T pop();
-	T peak();
+	void push(const T value) const;
+	T pop() const;
+	T peak() const;
 	int size() const;
-	void clear();
+	void clear() const;
 
 private:
-	linked_list<T>* internal_data_;
+	linked_list<T> internal_data_;
 };
