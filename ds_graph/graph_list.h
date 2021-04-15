@@ -15,7 +15,7 @@ class graph_list
 {
 public:
     // Constructor
-    graph_list(int size, graph_edge edges[]);
+    graph_list(int vertices, vector<graph_edge> edges);
 
     bool is_weighted() const;
     bool is_directed() const;
@@ -29,7 +29,7 @@ private:
         node* next_node;
     };
 
-    int size_;
+    int vertices;
     bool weighted_;
     bool directed_;
 

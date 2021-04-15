@@ -15,7 +15,7 @@ class graph_matrix
 {
 public:
     // Constructor
-    graph_matrix(int size, graph_edge edges[]);
+    graph_matrix(int vertices, vector<graph_edge> edges);
 
     bool is_weighted() const;
     bool is_directed() const;
@@ -23,7 +23,7 @@ public:
     bool is_planar() const;
 
 private:
-    int size_;
+    int vertices_;
     bool weighted_;
     bool directed_;
 
