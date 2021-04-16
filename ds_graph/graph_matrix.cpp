@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <queue>
 #include "graph_matrix.h"
 
 graph_matrix::graph_matrix(int vertices, vector<graph_edge> edges, bool weighted, bool directed)
@@ -30,10 +31,37 @@ graph_matrix::graph_matrix(int vertices, vector<graph_edge> edges, bool weighted
 
 bool graph_matrix::is_bipartite() const
 {
+    vector<int> colors(vertices_, 0);
+    queue<int> color_queue;
 
+    colors[0] = 1;
+    color_queue.push(0);
+
+    while(!color_queue.empty())
+    {
+        int source = color_queue.front();
+        color_queue.pop();
+
+        if(internal_matrix_[source][source] != 0)
+            return false;
+
+        for(int i = 0; i < vertices_; i++)
+        {
+            if(internal_matrix_[source][i] != 0 && colors[i] == 0)
+            {
+                colors[i] = colors[source] * -1;
+                color_queue.push(i);
+            }
+            else if(internal_matrix_[source][i] != 0 && colors[source] == colors[i])
+                return false;
+        }
+    }
+
+    return true;
 }
 
 bool graph_matrix::is_planar() const
 {
-
+    if(directed_)
+        return false;
 }
