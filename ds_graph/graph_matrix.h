@@ -15,10 +15,8 @@ class graph_matrix
 {
 public:
     // Constructor
-    graph_matrix(int vertices, vector<graph_edge> edges);
+    graph_matrix(int vertices, vector<graph_edge> edges, bool weighted, bool directed);
 
-    bool is_weighted() const;
-    bool is_directed() const;
     bool is_bipartite() const;
     bool is_planar() const;
 
