@@ -34,26 +34,35 @@ bool graph_matrix::is_bipartite() const
     vector<int> colors(vertices_, 0);
     queue<int> color_queue;
 
-    colors[0] = 1;
-    color_queue.push(0);
-
-    while(!color_queue.empty())
+    for(int v = 0; v < vertices_; v++)
     {
-        int source = color_queue.front();
-        color_queue.pop();
+        if(colors[v] != 0)
+            continue;
 
-        if(internal_matrix_[source][source] != 0)
-            return false;
+        colors[v] = 1;
+        color_queue.push(v);
 
-        for(int i = 0; i < vertices_; i++)
+        while(!color_queue.empty())
         {
-            if(internal_matrix_[source][i] != 0 && colors[i] == 0)
-            {
-                colors[i] = colors[source] * -1;
-                color_queue.push(i);
-            }
-            else if(internal_matrix_[source][i] != 0 && colors[source] == colors[i])
+            int source = color_queue.front();
+            color_queue.pop();
+
+            if(internal_matrix_[source][source] != 0)
                 return false;
+
+            for(int i = 0; i < vertices_; i++)
+            {
+                if(i == source)
+                    continue;
+
+                if(internal_matrix_[source][i] != 0 && colors[i] == 0)
+                {
+                    colors[i] = colors[source] * -1;
+                    color_queue.push(i);
+                }
+                else if(internal_matrix_[source][i] != 0 && colors[source] == colors[i])
+                    return false;
+            }
         }
     }
 

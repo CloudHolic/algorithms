@@ -65,32 +65,38 @@ bool graph_list::is_bipartite() const
     vector<int> colors(vertices_, 0);
     queue<int> color_queue;
 
-    colors[0] = 1;
-    color_queue.push(0);
-
-    while(!color_queue.empty())
+    for(int v = 0; v < vertices_; v++)
     {
-        int source = color_queue.front();
-        color_queue.pop();
+        if(colors[v] != 0)
+            continue;
 
-        node* new_node = internal_list_[source];
-        while(true)
+        colors[v] = 1;
+        color_queue.push(v);
+
+        while(!color_queue.empty())
         {
-            if(new_node == nullptr)
-                break;
-            
-            if(new_node->vertex == source)
-                return false;
-            
-            if(colors[new_node->vertex] == 0)
+            int source = color_queue.front();
+            color_queue.pop();
+
+            node* new_node = internal_list_[source];
+            while(true)
             {
-                colors[new_node->vertex] = colors[source] * -1;
-                color_queue.push(new_node->vertex);
+                if(new_node == nullptr)
+                    break;
+                
+                if(new_node->vertex == source)
+                    return false;
+                
+                if(colors[new_node->vertex] == 0)
+                {
+                    colors[new_node->vertex] = colors[source] * -1;
+                    color_queue.push(new_node->vertex);
+                }
+                else if(colors[new_node->vertex] == colors[source])
+                    return false;
+                
+                new_node = new_node->next_node;
             }
-            else if(colors[new_node->vertex] == colors[source])
-                return false;
-            
-            new_node = new_node->next_node;
         }
     }
 
