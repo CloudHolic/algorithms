@@ -17,11 +17,14 @@ public:
     // Constructor
     graph_list(int vertices, vector<graph_edge> edges, bool weighted, bool directed);
 
+    // Destructor
+    ~graph_list();
+
     bool dfs(int start, void(*worker)(int)) const;
     bool bfs(int start, void(*worker)(int)) const;
 
     bool is_connected() const;
-    bool is_bipartite() const;
+    bool is_bipartite() const; 
     bool is_planar() const;
     bool is_cactus() const;
 

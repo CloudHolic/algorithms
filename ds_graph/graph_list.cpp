@@ -61,6 +61,12 @@ graph_list::graph_list(int vertices, vector<graph_edge> edges, bool weighted, bo
     }
 }
 
+graph_list::~graph_list()
+{
+    for(int i = 0; i < vertices_; i++)
+        delete internal_list_[i];
+}
+
 bool graph_list::dfs(int start, void(*worker)(int)) const
 {
     vector<bool> visited(vertices_, false);
