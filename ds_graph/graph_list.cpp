@@ -66,8 +66,9 @@ bool graph_list::dfs(int start, void(*worker)(int)) const
     vector<bool> visited(vertices_, false);
     stack<int> visited_stack;
 
-    visited[0] = true;
-    visited_stack.push(0);
+    visited[start] = true;
+    visited_stack.push(start);
+    worker(start);
 
     while(!visited_stack.empty())
     {
@@ -97,8 +98,9 @@ bool graph_list::bfs(int start, void(*worker)(int)) const
     vector<bool> visited(vertices_, false);
     queue<int> visited_queue;
 
-    visited[0] = true;
-    visited_queue.push(0);
+    visited[start] = true;
+    visited_queue.push(start);
+    worker(start);
 
     while(!visited_queue.empty())
     {
