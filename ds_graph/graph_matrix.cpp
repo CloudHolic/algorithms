@@ -29,6 +29,11 @@ graph_matrix::graph_matrix(int vertices, vector<graph_edge> edges, bool weighted
                     throw std::invalid_argument("Edges should be undirected.");
 }
 
+bool graph_matrix::is_connected() const
+{
+    
+}
+
 bool graph_matrix::is_bipartite() const
 {
     vector<int> colors(vertices_, 0);
@@ -73,4 +78,14 @@ bool graph_matrix::is_planar() const
 {
     if(directed_)
         return false;
+}
+
+bool graph_matrix::dfs(int start, void(*worker)(int)) const
+{
+
+}
+
+bool graph_matrix::bfs(int start, void(*worker)(int)) const
+{
+
 }

@@ -60,6 +60,11 @@ graph_list::graph_list(int vertices, vector<graph_edge> edges, bool weighted, bo
     }
 }
 
+bool graph_list::is_connected() const
+{
+    
+}
+
 bool graph_list::is_bipartite() const
 {
     vector<int> colors(vertices_, 0);
@@ -107,4 +112,14 @@ bool graph_list::is_planar() const
 {
     if(directed_)
         return false;
+}
+
+bool graph_list::dfs(int start, void(*worker)(int)) const
+{
+
+}
+
+bool graph_list::bfs(int start, void(*worker)(int)) const
+{
+    
 }
