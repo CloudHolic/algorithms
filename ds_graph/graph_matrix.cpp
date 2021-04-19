@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <queue>
+#include <stack>
 #include "graph_matrix.h"
 
 graph_matrix::graph_matrix(int vertices, vector<graph_edge> edges, bool weighted, bool directed)
@@ -29,9 +30,92 @@ graph_matrix::graph_matrix(int vertices, vector<graph_edge> edges, bool weighted
                     throw std::invalid_argument("Edges should be undirected.");
 }
 
+bool graph_matrix::dfs(int start, void(*worker)(int)) const
+{
+    vector<bool> visited(vertices_, false);
+    stack<int> visited_stack;
+
+    visited[0] = true;
+    visited_stack.push(0);
+
+    while(!visited_stack.empty())
+    {
+        int source = visited_stack.top();
+        visited_stack.pop();
+
+        for(int i = 0; i < vertices_; i++)
+        {
+            if(i == source)
+                continue;
+
+            if(internal_matrix_[source][i] != 0 && !visited[i])
+            {
+                visited[i] = true;
+                visited_stack.push(i);
+                worker(i);
+            }
+        }
+    }
+}
+
+bool graph_matrix::bfs(int start, void(*worker)(int)) const
+{
+    vector<bool> visited(vertices_, false);
+    queue<int> visited_queue;
+
+    visited[0] = true;
+    visited_queue.push(0);
+
+    while(!visited_queue.empty())
+    {
+        int source = visited_queue.front();
+        visited_queue.pop();
+
+        for(int i = 0; i < vertices_; i++)
+        {
+            if(i == source)
+                continue;
+
+            if(internal_matrix_[source][i] != 0 && !visited[i])
+            {
+                visited[i] = true;
+                visited_queue.push(i);
+                worker(i);
+            }
+        }
+    }
+}
+
 bool graph_matrix::is_connected() const
 {
-    
+    vector<bool> visited(vertices_, false);
+    stack<int> visited_stack;
+    int count = 0;
+
+    visited[0] = true;
+    visited_stack.push(0);
+    count++;
+
+    while(!visited_stack.empty())
+    {
+        int source = visited_stack.top();
+        visited_stack.pop();
+
+        for(int i = 0; i < vertices_; i++)
+        {
+            if(i == source)
+                continue;
+
+            if(internal_matrix_[source][i] != 0 && !visited[i])
+            {
+                visited[i] = true;
+                visited_stack.push(i);
+                count++;
+            }
+        }
+    }
+
+    return count == vertices_;
 }
 
 bool graph_matrix::is_bipartite() const
@@ -81,16 +165,6 @@ bool graph_matrix::is_planar() const
 }
 
 bool graph_matrix::is_cactus() const
-{
-    
-}
-
-bool graph_matrix::dfs(int start, void(*worker)(int)) const
-{
-
-}
-
-bool graph_matrix::bfs(int start, void(*worker)(int)) const
 {
 
 }

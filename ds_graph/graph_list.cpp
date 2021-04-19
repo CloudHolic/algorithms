@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <queue>
+#include <stack>
 #include "graph_list.h"
 
 graph_list::graph_list(int vertices, vector<graph_edge> edges, bool weighted, bool directed)
@@ -60,9 +61,101 @@ graph_list::graph_list(int vertices, vector<graph_edge> edges, bool weighted, bo
     }
 }
 
+bool graph_list::dfs(int start, void(*worker)(int)) const
+{
+    vector<bool> visited(vertices_, false);
+    stack<int> visited_stack;
+
+    visited[0] = true;
+    visited_stack.push(0);
+
+    while(!visited_stack.empty())
+    {
+        int source = visited_stack.top();
+        visited_stack.pop();
+
+        node* new_node = internal_list_[source];
+        while(true)
+        {
+            if(new_node == nullptr)
+                break;
+
+            if(!visited[new_node->vertex])
+            {
+                visited[new_node->vertex] = true;
+                visited_stack.push(new_node->vertex);
+                worker(new_node->vertex);
+            }
+
+            new_node = new_node->next_node;
+        }
+    }
+}
+
+bool graph_list::bfs(int start, void(*worker)(int)) const
+{
+    vector<bool> visited(vertices_, false);
+    queue<int> visited_queue;
+
+    visited[0] = true;
+    visited_queue.push(0);
+
+    while(!visited_queue.empty())
+    {
+        int source = visited_queue.front();
+        visited_queue.pop();
+
+        node* new_node = internal_list_[source];
+        while(true)
+        {
+            if(new_node == nullptr)
+                break;
+
+            if(!visited[new_node->vertex])
+            {
+                visited[new_node->vertex] = true;
+                visited_queue.push(new_node->vertex);
+                worker(new_node->vertex);
+            }
+
+            new_node = new_node->next_node;
+        }
+    }
+}
+
 bool graph_list::is_connected() const
 {
-    
+    vector<bool> visited(vertices_, false);
+    stack<int> visited_stack;
+    int count = 0;
+
+    visited[0] = true;
+    visited_stack.push(0);
+    count++;
+
+    while(!visited_stack.empty())
+    {
+        int source = visited_stack.top();
+        visited_stack.pop();
+
+        node* new_node = internal_list_[source];
+        while(true)
+        {
+            if(new_node == nullptr)
+                break;
+
+            if(!visited[new_node->vertex])
+            {
+                visited[new_node->vertex] = true;
+                visited_stack.push(new_node->vertex);
+                count++;
+            }
+
+            new_node = new_node->next_node;
+        }
+    }
+
+    return count == vertices_;
 }
 
 bool graph_list::is_bipartite() const
@@ -115,16 +208,6 @@ bool graph_list::is_planar() const
 }
 
 bool graph_list::is_cactus() const
-{
-    
-}
-
-bool graph_list::dfs(int start, void(*worker)(int)) const
-{
-
-}
-
-bool graph_list::bfs(int start, void(*worker)(int)) const
 {
 
 }
