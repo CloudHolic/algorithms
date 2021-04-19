@@ -20,6 +20,7 @@ public:
     bool is_connected() const;
     bool is_bipartite() const;
     bool is_planar() const;
+    bool is_cactus() const;
 
     bool dfs(const int start, void(*worker)(int)) const;
     bool bfs(const int start, void(*worker)(int)) const;

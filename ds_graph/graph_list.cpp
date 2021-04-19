@@ -114,6 +114,11 @@ bool graph_list::is_planar() const
         return false;
 }
 
+bool graph_list::is_cactus() const
+{
+    
+}
+
 bool graph_list::dfs(int start, void(*worker)(int)) const
 {
 
@@ -121,5 +126,5 @@ bool graph_list::dfs(int start, void(*worker)(int)) const
 
 bool graph_list::bfs(int start, void(*worker)(int)) const
 {
-    
+
 }

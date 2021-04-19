@@ -80,6 +80,11 @@ bool graph_matrix::is_planar() const
         return false;
 }
 
+bool graph_matrix::is_cactus() const
+{
+    
+}
+
 bool graph_matrix::dfs(int start, void(*worker)(int)) const
 {
 
