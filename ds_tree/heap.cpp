@@ -57,7 +57,7 @@ void heap::pop()
 
 int heap::peak() const
 {
-    return *(nodes_[1]);
+    return *nodes_[1];
 }
 
 void heap::clear()
