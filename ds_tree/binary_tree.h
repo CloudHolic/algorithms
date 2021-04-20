@@ -36,9 +36,9 @@ public:
     vector<T> inorder() const;
     vector<T> postorder() const;
 
+    void clear(tree_node<T>* node);
+
 private:
     tree_node<T>* root_;
     int size_;
-
-    void clear(tree_node<T>* node);
 };
