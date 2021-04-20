@@ -7,7 +7,11 @@ using namespace std;
 class heap
 {
 public:
+    // Constructor
     heap(int size);
+
+    // Destructor
+    ~heap();
 
     void insert(const int value);
     void pop();
@@ -15,6 +19,6 @@ public:
     void clear();
 
 private:
-    vector<int> nodes_;
-    int size_;
+    vector<int*> nodes_;
+    int max_size_, current_size_;
 };
