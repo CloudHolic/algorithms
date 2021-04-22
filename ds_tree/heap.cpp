@@ -15,12 +15,12 @@ heap::~heap()
 
 void heap::insert(const int value)
 {
-    if(current_size_ >= max_size_)
+    if (current_size_ >= max_size_)
         throw std::range_error("Heap is already full.");
 
     int index = ++current_size_;
 
-    while(index != 1 && *nodes_[index / 2] < value)
+    while (index != 1 && *nodes_[index / 2] < value)
     {
         nodes_[index] = nodes_[index / 2];
         index /= 2;
@@ -31,7 +31,7 @@ void heap::insert(const int value)
 
 void heap::pop()
 {
-    if(current_size_ <= 0)
+    if (current_size_ <= 0)
         throw std::range_error("Heap is already empty.");
 
     int parent_node = 1, child_node = 2;
@@ -39,12 +39,12 @@ void heap::pop()
     delete nodes_[1];
     temp = nodes_[current_size_--];
 
-    while(child_node <= current_size_)
+    while (child_node <= current_size_)
     {
-        if(child_node < current_size_ && *nodes_[child_node] < *nodes_[child_node + 1])
+        if (child_node < current_size_ && *nodes_[child_node] < *nodes_[child_node + 1])
             child_node++;
 
-        if(*temp >= *nodes_[child_node])
+        if (*temp >= *nodes_[child_node])
             break;
 
         nodes_[parent_node] = nodes_[child_node];
@@ -62,7 +62,7 @@ int heap::peak() const
 
 void heap::clear()
 {
-    for(int i = 0; i < current_size_; i++)
+    for (int i = 0; i < current_size_; i++)
         delete nodes_[i];
     
     current_size_ = 0;

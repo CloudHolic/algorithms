@@ -32,7 +32,7 @@ template <typename T>
 void binary_tree<T>::insert(tree_node<T>* parent_node, T value, bool is_left)
 {
     tree_node<T>* new_node = new tree_node(value);
-    if(is_left)
+    if (is_left)
         parent_node->left_child = new_node;
     else
         parent_node->right_child = new_node;
@@ -42,21 +42,21 @@ template <typename T>
 vector<T> binary_tree<T>::preorder() const
 {
     vector<T> result;
-    if(root_ == nullptr)
+    if (root_ == nullptr)
         return result;
 
     stack<tree_node<T>*> node_stack;
     node_stack.push(root_);
 
-    while(!node_stack.empty())
+    while (!node_stack.empty())
     {
         tree_node<T>* source = node_stack.top();
         node_stack.pop();
         result.push_back(source->data);
 
-        if(source->right_child != nullptr)
+        if (source->right_child != nullptr)
             node_stack.push(source->right_child);
-        if(source->left_child != nullptr)
+        if (source->left_child != nullptr)
             node_stack.push(source->left_child);
     }
 
@@ -67,15 +67,15 @@ template <typename T>
 vector<T> binary_tree<T>::inorder() const
 {
     vector<T> result;
-    if(root_ == nullptr)
+    if (root_ == nullptr)
         return result;
 
     stack<tree_node<T>*> node_stack;
     tree_node<T>* cur_node = root_;
 
-    while(cur_node != nullptr || !node_stack.empty())
+    while (cur_node != nullptr || !node_stack.empty())
     {
-        while(cur_node != nullptr)
+        while (cur_node != nullptr)
         {
             node_stack.push(cur_node);
             cur_node = cur_node->left_child;
@@ -95,15 +95,15 @@ template <typename T>
 vector<T> binary_tree<T>::postorder() const
 {
     vector<T> result;
-    if(root_ == nullptr)
+    if (root_ == nullptr)
         return result;
 
     stack<tree_node<T>*> node_stack;
     tree_node<T>* cur_node = root_;
 
-    while(!node_stack.empty())
+    while (!node_stack.empty())
     {
-        while(cur_node != nullptr)
+        while (cur_node != nullptr)
         {
             node_stack.push(cur_node);
             node_stack.push(cur_node);
@@ -113,7 +113,7 @@ vector<T> binary_tree<T>::postorder() const
         cur_node = node_stack.top();
         node_stack.pop();
 
-        if(node_stack.top() == cur_node)
+        if (node_stack.top() == cur_node)
             cur_node = cur_node->right_child;
         else
         {
@@ -128,7 +128,7 @@ vector<T> binary_tree<T>::postorder() const
 template <typename T>
 void binary_tree<T>::clear(tree_node<T>* node)
 {
-    if(node != nullptr)
+    if (node != nullptr)
     {
         clear(node->left_child);
         clear(node->right_child);
