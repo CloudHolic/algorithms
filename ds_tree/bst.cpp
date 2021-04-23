@@ -103,7 +103,10 @@ void bst::move_subtree(int parent, int child)
 {
     delete nodes_[parent];
     if(child == 0)
+    {
+        nodes_[parent] = nullptr;
         return;
+    }
     
     nodes_[parent] = nodes_[child];
     parent *= 2;
@@ -112,9 +115,15 @@ void bst::move_subtree(int parent, int child)
     while (child < max_size_ && (nodes_[child] != nullptr || nodes_[child + 1] != nullptr))
     {
         if (nodes_[child] != nullptr)
+        {
             nodes_[parent] = nodes_[child];
+            nodes_[child] = nullptr;
+        }
         if (nodes_[child + 1] != nullptr)
+        {
             nodes_[parent + 1] = nodes_[child + 1];
+            nodes_[child + 1] = nullptr;
+        }
 
         parent *= 2;
         child *= 2;
