@@ -25,4 +25,6 @@ public:
 private:
     vector<int*> nodes_;
     int max_size_, current_size_;
+
+    void move_subtree(int parent, int child);
 };
