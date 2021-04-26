@@ -34,6 +34,7 @@ private:
         RED,
         BLACK
     };
+    
     struct node
     {
         int data;
