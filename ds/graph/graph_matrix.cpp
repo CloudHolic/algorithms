@@ -168,5 +168,4 @@ bool graph_matrix::is_planar() const
 
 bool graph_matrix::is_cactus() const
 {
-
 }

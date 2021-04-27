@@ -217,5 +217,4 @@ bool graph_list::is_planar() const
 
 bool graph_list::is_cactus() const
 {
-
 }
