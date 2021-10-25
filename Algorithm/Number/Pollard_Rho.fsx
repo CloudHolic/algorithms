@@ -2,12 +2,10 @@ open System
 open System.Numerics
 
 let pollardRho (n: int64) =
-    let mulMod (m: bigint) (a: bigint) (b: bigint) = (a * b) % m
-    let squareMod (m: bigint) (n: bigint) = (n * n) % m
-    let squareIncMod (m: bigint) (n: bigint) (c: bigInt) = (n * n + c) % m
-
     // Returns true if n is prime number.
-    let millerRabin (n: int64) = 
+    let millerRabin (n: int64) =     
+        let mulMod (m: bigint) (a: bigint) (b: bigint) = (a * b) % m
+        let squareMod (m: bigint) (n: bigint) = (n * n) % m
         let logPow mul sq (n: bigint) (k: int64) =
             let infSeq = n |> Seq.unfold (fun state -> Some(state, sq state))
             let binaryList = k |> List.unfold (fun state ->
@@ -58,34 +56,23 @@ let pollardRho (n: int64) =
             |> List.filter (fun x -> (int64 x) < n)
             |> List.forall (millerRabinTest <| bigint n)
 
-    let rec gcd (x: int64) (y: int64) =
-        if y = 0L then x
+    let rec gcd (x: bigint) (y: bigint) =
+        if y = 0I then x
         else gcd y (x % y)
 
     let rec inner (n: int64) factors =
-        let rec calc n c =            
-            let mutable x = 1L
-            let mutable y = 1L
-
-            while gcd n (x - y) = 1L do
-                x <- squareIncMod x c
-                y <- squareIncMod (squareIncMod y c) c
-                gcd n (x - y)
-                |> function
-                    | 1 -> calc n c
-                    | n -> 
+        let squareIncMod (m: bigint) (c: bigint) = (m * m + c) % (bigint n)
+        let rec calc x y c = (squareIncMod x c, squareIncMod (squareIncMod y c) c)
 
         millerRabin n
         |> function
             | true -> n :: factors
-            | _ -> 
-                let mutable x = 2L
-                let mutable y = 2L
-                x <- x * x + 1L
-                y <- y * y + 1L
-                y <- y * y + 1L
-                let g = gcd n (x - y)
-                inner (int64 g) factors
-                inner (int64 n / g) factors
+            | false -> 
+                let (x, y) = calc 1I 1I 1I
+                let g = gcd (bigint n) (x - y)
+                match g with
+                | 1 -> calc x y 1I
+                | n -> calc 1I 1I 2I
+                | _ -> (inner (int64 g) factors) @ (inner (n / int64 g) factors)
 
     inner n []
