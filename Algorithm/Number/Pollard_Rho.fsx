@@ -78,16 +78,15 @@ let pollardRho (n: int64) =
                     match g with
                     | 1L -> inner n x y c factors
                     | _ when g = n -> 
-                        let newX = random.Next() |> bigint
-                        let newC = random.Next() |> bigint
-                        inner n newX newX newC factors
+                        let x = random.Next() |> bigint
+                        let c = random.Next() |> bigint
+                        inner n x x c factors
                     | _ ->                         
-                        let newX = random.Next() |> bigint
-                        let newC = random.Next() |> bigint
-                        inner g newX newX newC factors @ inner (n / g) newX newX newC factors
+                        let x = random.Next() |> bigint
+                        let c = random.Next() |> bigint
+                        inner g x x c factors @ inner (n / g) x x c factors
 
     let (s, d) = bigint n |> find2s
     let startX = random.Next() |> bigint
     let startC = random.Next() |> bigint
-    List.init s (fun _ -> 2L)
-    |> inner (int64 d) startX startX startC
+    List.init s (fun _ -> 2L) @ inner (int64 d) startX startX startC []
