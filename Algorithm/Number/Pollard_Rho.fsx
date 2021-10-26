@@ -68,7 +68,7 @@ let pollardRho (n: int64) =
 
         match n with
         | 1L -> factors
-        | 4L -> [2L; 2L] @ factors
+        | 4L -> [2L; 2L] @ factors  // Why n = 4 makes infinite loop...?
         | _ ->
             millerRabin n
             |> function
