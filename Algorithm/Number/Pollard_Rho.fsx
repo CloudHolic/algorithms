@@ -2,6 +2,15 @@ open System
 open System.Numerics
 
 let pollardRho (n: int64) =
+    let find2s n =
+        let rec inner s d =
+            let isOdd = d &&& 1I |> int
+            match isOdd with
+            | 1 -> (s, d)
+            | _ -> inner <|| (s + 1, d >>> 1)
+
+        inner 0 n
+
     // Returns true if n is prime number.
     let millerRabin (n: int64) =     
         let mulMod (m: bigint) (a: bigint) (b: bigint) = (a * b) % m
@@ -24,16 +33,7 @@ let pollardRho (n: int64) =
         let powMod m = logPow (mulMod m) (squareMod m)
 
         // Execute Miller-Rabin Test with n and a.
-        let millerRabinTest (n: bigint) (a: int) =
-            let find2s n =
-                let rec inner s d =
-                    let isOdd = d &&& 1I |> int
-                    match isOdd with
-                    | 1 -> (s, d)
-                    | _ -> inner <|| (s + 1, d >>> 1)
-
-                inner 0 n
-
+        let millerRabinTest (n: bigint) (a: int) =    
             let (s, d) = (n - 1I) |> find2s
             let b = powMod n (bigint a) (int64 d)
 
@@ -56,33 +56,38 @@ let pollardRho (n: int64) =
             |> List.filter (fun x -> (int64 x) < n)
             |> List.forall (millerRabinTest <| bigint n)
 
+    let random = Random()
+
     let rec gcd (x: bigint) (y: bigint) =
         if y = 0I then int64 x
         else gcd y (x % y)
 
-    let testConstant = [|1I; -1I; 2I|]
-
     let rec inner (n: int64) x y c factors =
         let squareIncMod (m: bigint) (c: bigint) = (m * m + c) % (bigint n)
-        let rec calc x y c = (squareIncMod x c, squareIncMod (squareIncMod y c) c)
+        let calc x y c = (squareIncMod x c, squareIncMod (squareIncMod y c) c)
 
         match n with
         | 1L -> factors
-        | 4L -> [2L; 2L] @ factors  // Why n = 4 makes infinite loop...?
         | _ ->
             millerRabin n
             |> function
                 | true -> n :: factors
                 | false -> 
-                    let mutable constant = 0I
-                    if c <= 2 then constant <- testConstant.[c]
-                    elif c > 2 then constant <- (new System.Random()).Next(1, 10) |> bigint
-
-                    let (x, y) = calc x y constant
+                    let (x, y) = calc x y c
                     let g = gcd (bigint n) (abs (x - y))
                     match g with
                     | 1L -> inner n x y c factors
-                    | _ when g = n -> inner n 1I 1I (c + 1) factors
-                    | _ -> inner g 1I 1I 0 factors @ inner (n / g) 1I 1I 0 factors
+                    | _ when g = n -> 
+                        let newX = random.Next() |> bigint
+                        let newC = random.Next() |> bigint
+                        inner n newX newX newC factors
+                    | _ ->                         
+                        let newX = random.Next() |> bigint
+                        let newC = random.Next() |> bigint
+                        inner g newX newX newC factors @ inner (n / g) newX newX newC factors
 
-    inner n 1I 1I 0 []
+    let (s, d) = bigint n |> find2s
+    let startX = random.Next() |> bigint
+    let startC = random.Next() |> bigint
+    List.init s (fun _ -> 2L)
+    |> inner (int64 d) startX startX startC
