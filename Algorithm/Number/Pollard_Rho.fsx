@@ -13,16 +13,16 @@ let pollardRho (n: int64) =
                 | 0L -> None
                 | _ -> Some(state % 2L, state / 2L))
             let expArr = (List.length binaryList, infSeq) ||> Seq.take |> Array.ofSeq
-    
+
             binaryList
             |> List.mapi (fun i x ->
                 match x with
                 | 1L -> expArr.[i]
                 | _ -> 1I)
             |> List.fold (fun acc x -> mul acc x) 1I
-        
-        let powMod m = logPow (mulMod m) (squareMod m)
     
+        let powMod m = logPow (mulMod m) (squareMod m)
+
         // Execute Miller-Rabin Test with n and a.
         let millerRabinTest (n: bigint) (a: int) =
             let find2s n =
@@ -31,12 +31,12 @@ let pollardRho (n: int64) =
                     match isOdd with
                     | 1 -> (s, d)
                     | _ -> inner <|| (s + 1, d >>> 1)
-    
+
                 inner 0 n
-    
+
             let (s, d) = (n - 1I) |> find2s
             let b = powMod n (bigint a) (int64 d)
-    
+
             match (a, n) with
             | _ when b = 1I || b = (n - 1I) -> true
             | _ -> b
@@ -45,7 +45,7 @@ let pollardRho (n: int64) =
                     |> Seq.skip 1
                     |> Seq.tryPick (fun x -> if x = 1I then Some(false) elif x = n - 1I then Some(true) else None)
                     |> Option.exists id
-                
+            
         match n with
         | _ when n < 2L -> false
         | _ when n = 2L -> true
@@ -57,22 +57,32 @@ let pollardRho (n: int64) =
             |> List.forall (millerRabinTest <| bigint n)
 
     let rec gcd (x: bigint) (y: bigint) =
-        if y = 0I then x
+        if y = 0I then int64 x
         else gcd y (x % y)
 
-    let rec inner (n: int64) factors =
+    let testConstant = [|1I; -1I; 2I|]
+
+    let rec inner (n: int64) x y c factors =
         let squareIncMod (m: bigint) (c: bigint) = (m * m + c) % (bigint n)
         let rec calc x y c = (squareIncMod x c, squareIncMod (squareIncMod y c) c)
 
-        millerRabin n
-        |> function
-            | true -> n :: factors
-            | false -> 
-                let (x, y) = calc 1I 1I 1I
-                let g = gcd (bigint n) (x - y)
-                match g with
-                | 1 -> calc x y 1I
-                | n -> calc 1I 1I 2I
-                | _ -> (inner (int64 g) factors) @ (inner (n / int64 g) factors)
+        match n with
+        | 1L -> factors
+        | 4L -> [2L; 2L] @ factors
+        | _ ->
+            millerRabin n
+            |> function
+                | true -> n :: factors
+                | false -> 
+                    let mutable constant = 0I
+                    if c <= 2 then constant <- testConstant.[c]
+                    elif c > 2 then constant <- (new System.Random()).Next(1, 10) |> bigint
 
-    inner n []
+                    let (x, y) = calc x y constant
+                    let g = gcd (bigint n) (abs (x - y))
+                    match g with
+                    | 1L -> inner n x y c factors
+                    | _ when g = n -> inner n 1I 1I (c + 1) factors
+                    | _ -> inner g 1I 1I 0 factors @ inner (n / g) 1I 1I 0 factors
+
+    inner n 1I 1I 0 []
