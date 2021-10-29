@@ -5,24 +5,24 @@ using namespace std;
 typedef long long int64;
 typedef __int128 int128;
 
-namespace miller_rabin
+namespace MillerRabin
 {
     int64 multiply(int64 x, int64 y, int64 m)
     {
         return (int128)x * y % m;
     }
 
-    int64 fastpow(int64 x, int64 y, int64 p)
+    int64 fast_pow(int64 n, int64 k, int64 m)
     {
-        int64 ret = 1, piv = x % p;
-        while(y)
+        int64 result = 1, next_exp = n % m;
+        while(k)
         {
-            if (y & 1)
-                ret = multiply(ret, piv, p);
-            piv = multiply(piv, piv, p);
-            y >>= 1;
+            if (k & 1)
+                result = multiply(result, next_exp, m);
+            next_exp = multiply(next_exp, next_exp, m);
+            k >>= 1;
         }
-        return ret;
+        return result;
     }
 
     bool miller_rabin_test(int64 num, int64 a)
@@ -33,28 +33,81 @@ namespace miller_rabin
 
         for(;;)
         {
-            int64 tmp = fastpow(a, d, num);
+            int64 cur = fast_pow(a, d, num);
             if(d & 1)
-                return (tmp != 1 && tmp != num - 1);
-            if (tmp == x - 1)
+                return cur != 1 && cur != num - 1;
+            if (cur == num - 1)
                 return false;
             d >>= 1;
         }
     }
 
     bool miller_rabin(int64 num)
-    {
-        for(auto &i: {2, 325, 9375, 28178, 450775, 9780504, 1795265022}) // {2, 7, 61} for 32-bit integers.
+    {        
+        for(auto &i: {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37})
         {
-            if (num >= i)
-                break;
+            if (num <= i)
+                break;      
+            if (miller_rabin_test(num, i))
+                return false;
         }
+        return true;
     }
 }
 
-int main() {
-    __int128 a_128;
+namespace PollardRho
+{
+    using namespace MillerRabin;
 
-    cout << "Hello, World!" << endl;
-    return 0;
+    int64 calc(int64 x, int64 c, int64 m)
+    {
+        int64 square = (int128)x * x % m;
+        return (square + c) % m;
+    }
+
+    void inner(int64 num, vector<int64> &factors)
+    {
+        if (num == 1)
+            return;
+        if (!(num & 1))
+        {
+            factors.push_back(2);
+            inner(num / 2, factors);
+            return;
+        }
+        if (miller_rabin(num))
+        {
+            factors.push_back(num);
+            return;
+        }
+
+        int64 x, y, c;
+        for(;;)
+        {
+            x = rand() % (num - 2) + 1;
+            c = rand() % 20 + 1;
+            y = x;
+
+            do
+            {
+                x = calc(x, c,  num);
+                y = calc(calc(y, c, num), c, num);
+            } while(gcd(num, abs(x - y)) == 1);
+
+            if (x != y)
+                break;
+        }
+
+        int64 g = gcd(num, abs(x - y));
+        inner(g, factors);
+        inner(num / g, factors);
+    }
+
+    vector<int64> pollard_rho(int64 num)
+    {
+        vector<int64> result;
+        inner(num, result);
+        sort(result.begin(), result.end());
+        return result;
+    }
 }

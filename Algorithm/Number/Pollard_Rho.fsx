@@ -46,15 +46,21 @@ let pollardRho (n: int64) =
                     |> Seq.tryPick (fun x -> if x = 1I then Some(false) elif x = n - 1I then Some(true) else None)
                     |> Option.exists id
             
+        let int32DataSet = [2; 7; 61]
+        let int64DataSet = [2; 325; 9375; 28178; 450775; 9780504; 1795265022]
+
+        let ExecuteTest dataset =
+            dataset
+            |> List.filter (fun x -> (int64 x) < n)
+            |> List.forall (millerRabinTest <| bigint n)
+
         match n with
         | _ when n < 2L -> false
         | _ when n = 2L -> true
         | _ when n = 3L -> true
         | _ when n % 2L = 0L -> false
-        | _ -> 
-            [2; 325; 9375; 28178; 450775; 9780504; 1795265022] // [2; 7; 61] for 32-bit integers.
-            |> List.filter (fun x -> (int64 x) < n)
-            |> List.forall (millerRabinTest <| bigint n)
+        | _ when n >>> 32 > 1L-> ExecuteTest int32DataSet
+        | _ -> ExecuteTest int64DataSet
 
     let random = Random()
 
