@@ -43,11 +43,14 @@ namespace MillerRabin
     }
 
     bool miller_rabin(int64 num)
-    {        
-        for(auto &i: {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37})
+    {
+        if (num < 2 || num % 6 % 4 != 1)
+            return (num | 1) == 3;
+
+        for(auto &i: {2, 325, 9375, 28178, 450775, 9780504, 1795265022})    // {2, 7, 61} for 32-bit int.
         {
             if (num <= i)
-                break;      
+                break;
             if (miller_rabin_test(num, i))
                 return false;
         }
@@ -63,6 +66,26 @@ namespace PollardRho
     {
         int64 square = (int128)x * x % m;
         return (square + c) % m;
+    }
+
+    int64 binary_gcd(int64 x, int64 y)
+    {
+        if (x == 0)
+            return y;
+        if (y == 0)
+            return x;
+
+        int shift = __builtin_ctz(x | y);
+        x >>= __builtin_ctz(x);
+
+        do {
+            y >>= __builtin_ctz(y);
+            if (x > y)
+                swap(x, y);
+            y -= x;
+        } while (y != 0);
+
+        return x << shift;
     }
 
     void inner(int64 num, vector<int64> &factors)
@@ -92,13 +115,13 @@ namespace PollardRho
             {
                 x = calc(x, c,  num);
                 y = calc(calc(y, c, num), c, num);
-            } while(gcd(num, abs(x - y)) == 1);
+            } while(binary_gcd(num, abs(x - y)) == 1);
 
             if (x != y)
                 break;
         }
 
-        int64 g = gcd(num, abs(x - y));
+        int64 g = binary_gcd(num, abs(x - y));
         inner(g, factors);
         inner(num / g, factors);
     }

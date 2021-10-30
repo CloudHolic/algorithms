@@ -56,9 +56,7 @@ let pollardRho (n: int64) =
 
         match n with
         | _ when n < 2L -> false
-        | _ when n = 2L -> true
-        | _ when n = 3L -> true
-        | _ when n % 2L = 0L -> false
+        | _ when n % 6L % 4L <> 1L -> n ||| 1L = 3L
         | _ when n >>> 32 > 1L-> ExecuteTest int32DataSet
         | _ -> ExecuteTest int64DataSet
 
