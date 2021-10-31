@@ -5,7 +5,7 @@ using namespace std;
 typedef long long int64;
 typedef __int128 int128;
 
-namespace TonelliShanks
+namespace QuadraticResidue
 {
     int64 multiply(int64 x, int64 y, int64 m)
     {
@@ -28,6 +28,9 @@ namespace TonelliShanks
     // Find an integer x such that x^2 = n mod p.
     int64 tonelli_shanks(int64 n, int64 p)
     {
+        if (n == 0)
+            return 0;
+
         // 1. Check if n is quadratic residue in mod p.
         if (fast_pow(n, (p - 1) / 2, p) != 1)
             return -1;
@@ -82,7 +85,7 @@ namespace TonelliShanks
                 temp = multiply(temp, temp, p);
             }
 
-            int64 b = fast_pow(c, fast_pow(2, m - i - 1, 1), p) % p;
+            int64 b = fast_pow(c, fast_pow(2, m - i - 1, p - 1), p);
 
             m = i % p;
             c = multiply(b, b, p);
@@ -96,7 +99,7 @@ namespace TonelliShanks
 
 namespace Cornacchia
 {
-    using namespace TonelliShanks;
+    using namespace QuadraticResidue;
 
     // Find integers x, y such that x^2 + d * y^2 = n, where 1 <= d < m.
     pair<int64, int64> cornacchia(int64 d, int64 n)
