@@ -7,11 +7,13 @@ typedef __int128 int128;
 
 namespace QuadraticResidue
 {
+    // Compute x * y mod m
     int64 multiply(int64 x, int64 y, int64 m)
     {
         return (int128)x * y % m;
     }
 
+    // Compute n^k mod m.
     int64 fast_pow(int64 n, int64 k, int64 m)
     {
         int64 result = 1, next_exp = n % m;
@@ -25,11 +27,102 @@ namespace QuadraticResidue
         return result;
     }
 
-    // Find an integer x such that x^2 = n mod p.
+    // Compute n^(-1) mod m.
+    int64 inverse(int64 n, int64 m)
+    {
+        if (m == 1)
+            return 0;
+
+        int64 x_0 = 0, x_1 = 1, origin_m = m;
+        while (n >1)
+        {
+            int64 q = n / m, t = m;
+
+            m = n % m;
+            n = t;
+            t = x_0;
+            x_0 = x_1 - q * x_0;
+            x_1 = t;
+        }
+
+        // Make x_1 positive
+        if (x_1 < 0)
+            x_1 += origin_m;
+
+        return x_1;
+    }
+
+    // Apply Chinese Remainder Theorem.
+    // Find x such that
+    // x = remainders[0] mod nums[0],
+    // x = remainders[1] mod nums[1],
+    // ... and so on.
+    int64 chinese_remainder(vector<int64> nums, vector<int64> remainders)
+    {
+        int64 product = 1, result = 0;
+        size_t size = nums.size();
+        if (remainders.size() != size)
+            return -1;
+
+        for (int64 &num : nums)
+            product *= num;
+
+        // Apply above formula
+        for (size_t i = 0; i < size; i++) {
+            int64 pp = product / nums[i];
+            result += multiply(multiply(remainders[i], inverse(pp, nums[i]), product), pp, product);
+        }
+
+        return result % product;
+    }
+
+    // Apply Hensel's Lifting.
+    // Assume that f(x) = x^2 - n.
+    // If we know x_1 such that f(x_1) = 0 mod p,
+    // then find x_k such that f(x_k) = 0 mod p^k for given x, n, p, k.
+    // Calculate recursively like x_(k+1) = x_k - f(x_k) * f'(x_1)^-1 mod p^(k+1).
+    int64 hensel_lifting(int64 x, int64 n, int64 p, int64 k)
+    {
+        if (k == 1)
+            return x;
+
+        // f(x) = x^2 - n, f'(x) = 2x.
+        auto function = [n, p](int64 x) -> int64 { return x * x - (n % p); };
+        auto derivative = [](int64 x) -> int64 { return 2 * x; };
+
+        if (derivative(x) % p != 0)
+        {
+            int64 result = x;
+            int64 factor = 1;
+            for (int i = 0; i < k; i++)
+            {
+                factor *= p;
+                // Find modular inverse of f'(x_1) mod p^k
+                int64 inv = inverse(derivative(x), factor);
+                result = (result - function(result) * inv) % factor;
+
+                if (result < 0)
+                    result += factor;
+            }
+
+            return result;
+        }
+
+        return -1;
+    }
+
+    // Apply Tonelli-Shanks Algorithm.
+    // Find an integer x such that x^2 = n mod p, where p is a prime number.
     int64 tonelli_shanks(int64 n, int64 p)
     {
         if (n == 0)
             return 0;
+
+        if (n >= p)
+            n %= p;
+
+        if (p == 2)
+            return n;
 
         // 1. Check if n is quadratic residue in mod p.
         if (fast_pow(n, (p - 1) / 2, p) != 1)
@@ -93,7 +186,7 @@ namespace QuadraticResidue
             r = multiply(r, b, p);
         }
 
-        // 6. The answer is r, -r.
+        // 6. The answer is r, p - r.
     }
 }
 
@@ -105,11 +198,7 @@ namespace Cornacchia
     pair<int64, int64> cornacchia(int64 d, int64 n)
     {
         // 1. Find r_0 such that r_0^2 = -d mod n.
-        int64 sol = tonelli_shanks(n - d, n);
-        vector<int64> possible;
-        if(sol > 0)
-            possible = {sol, n - sol};
-
+        int64 possible = tonelli_shanks(n - d, n);        
         for(auto &r: possible)
         {
             if (r > n / 2)
@@ -146,14 +235,4 @@ namespace Cornacchia
         // No answer.
         return make_pair(-1, -1);
     }
-}
-
-int main()
-{
-    int64 n, p;
-    cin >> n >> p;
-    int64 result = TonelliShanks::tonelli_shanks(n, p);
-    cout << result;
-
-    return 0;
 }
