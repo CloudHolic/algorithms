@@ -51,6 +51,6 @@ let millerRabin (n: int64) =
     | _ when n = 3L -> true
     | _ when n % 2L = 0L -> false
     | _ -> 
-        [2; 325; 9375; 28178; 450775; 9780504; 1795265022] // [2; 7; 61] for 32-bit integers.
+        [2; 3; 5; 7; 11; 13; 17; 19; 23; 29; 31; 37]
         |> List.filter (fun x -> (int64 x) < n)
         |> List.forall (millerRabinTest <| bigint n)

@@ -12,6 +12,5 @@ let exp n k =
     |> List.mapi (fun i x ->
             match x with
             | 1 -> expArr.[i]
-            | _ -> 1
-        )
+            | _ -> 1)
     |> List.fold (fun acc x -> acc * x) 1

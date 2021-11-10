@@ -47,7 +47,7 @@ namespace MillerRabin
         if (num < 2 || num % 6 % 4 != 1)
             return (num | 1) == 3;
 
-        for(auto &i: {2, 325, 9375, 28178, 450775, 9780504, 1795265022})    // {2, 7, 61} for 32-bit int.
+        for(auto &i: {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37})
         {
             if (num <= i)
                 break;
