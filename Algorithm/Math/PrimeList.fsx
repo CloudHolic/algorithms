@@ -1,26 +1,20 @@
-module Number
+open System.Collections
 
-let primeList n m =
-    let increment x = x + 1
-    let table = Array.create (m + 1) true
-    let limit = m |> float |> sqrt |> int |> increment
-    let seqs i = Seq.init (m / i / 2) (fun e -> i * (e * 2 + 3))
-    let rec check factor cur =
-        match cur with
-        | c when c > Array.length table - 1 -> ()
-        | _ -> seqs factor |> Seq.iter (fun x -> if x <= m then table.[x] <- false)
+let getPrimes nmax =
+    let sieve = new BitArray((nmax/2) + 1, true)
+    let result = new ResizeArray<int>(nmax / 10)
+    let upper = int (sqrt (float nmax))   
 
-    table.[1] <- false
-    table |> Array.iteri (fun i _ -> if i > 2 && i % 2 = 0 then table.[i] <- false)
-    [3..2..limit] |> List.iter (fun x ->
-        match table.[x] with
-        | true -> check x <| x + x
-        | _ -> ())
-        
-    let mutable result = []
-    table |> Array.iteri (fun i x ->
-        match (i, x) with
-        | (i, _) when i < n -> ()
-        | (i, x) when x -> result <- [i] |> List.append result
-        | _ -> ())
+    if nmax > 1 then result.Add(2) 
+
+    let mutable m = 1
+    while 2 * m + 1 <= nmax do
+        if sieve.[m] then
+            let n = 2 * m + 1
+            if n <= upper then 
+                let mutable i = m
+                while 2 * i < nmax do sieve.[i] <- false; i <- i + n
+            result.Add n
+        m <- m + 1
+
     result
