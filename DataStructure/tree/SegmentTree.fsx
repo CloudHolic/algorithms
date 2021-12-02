@@ -1,3 +1,5 @@
+namespace FsCollection
+
 type SegmentTree<'T> = class
     val private op: 'T -> 'T -> 'T
     val private init: 'T
