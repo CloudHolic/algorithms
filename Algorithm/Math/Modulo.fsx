@@ -30,7 +30,8 @@ module Modulo =
 
 let modulo = 1000000007L
 
-let Add x y = Modulo.AddMod modulo
-let Mul x y = Modulo.MulMod modulo
-let Inverse x = Modulo.InverseMod modulo
-let Pow x k = Modulo.powMod modulo
+let Add x y = Modulo.AddMod modulo x y
+let Sub x y = Modulo.AddMod modulo x (modulo - y)
+let Mul x y = Modulo.MulMod modulo x y
+let Inverse x = Modulo.InverseMod modulo x
+let Pow x k = Modulo.powMod modulo x k
