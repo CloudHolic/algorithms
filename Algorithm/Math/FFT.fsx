@@ -47,8 +47,15 @@ module FastFourierTransform =
         if invert then result |> Array.map (fun i -> i / Complex(float n, 0.)) else result
 
     let multiply arr1 arr2 =
-        let size = Array.length arr1 + Array.length arr2 - 1
-        let size = Math.Pow(2., (Math.Log (float size) / Math.Log 2.) |> Math.Ceiling) |> int
+        let LeastSquare k =
+            if k = 0 then 0
+            else
+                let rec loop i t =
+                    if i >= 64 then t
+                    else loop (i * 2) (t ||| (t >>> i))
+                loop 1 (k - 1) + 1
+
+        let size = Array.length arr1 + Array.length arr2 - 1 |> LeastSquare
 
         let coeff1 = Array.init size (fun i -> if i < Array.length arr1 then Complex(float arr1.[i], 0.) else Complex(0., 0.))
         let coeff2 = Array.init size (fun i -> if i < Array.length arr2 then Complex(float arr2.[i], 0.) else Complex(0., 0.))
