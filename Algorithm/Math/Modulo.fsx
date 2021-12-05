@@ -26,7 +26,7 @@ module Modulo =
             | _ -> 1L)
         |> List.fold (fun acc x -> mul acc x) 1L
       
-    let powMod m = logPow (MulMod m) (SquareMod m)
+    let PowMod m = logPow (MulMod m) (SquareMod m)
 
 let modulo = 1000000007L
 
@@ -34,4 +34,4 @@ let Add = Modulo.AddMod modulo
 let Sub x y = modulo - y |> Add x
 let Mul = Modulo.MulMod modulo
 let Inverse = Modulo.InverseMod modulo
-let Pow = Modulo.powMod modulo
+let Pow = Modulo.PowMod modulo
