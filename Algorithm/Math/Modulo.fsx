@@ -4,12 +4,12 @@ module Modulo =
     let SquareMod m n = (n * n) % m
 
     let InverseMod m n =
-        let rec fN n i g e l a =
+        let rec inner n i g e l a =
             match e with
             | 0L -> g
             | _ -> let o = n / e
-                   fN e l a (n - o * e) (i - o * l) (g - o * a)
-        (m + (fN m 1L 0L n 0L 1L)) % m
+                   inner e l a (n - o * e) (i - o * l) (g - o * a)
+        (m + (inner m 1L 0L n 0L 1L)) % m
 
     let logPow mul sq (n: int64) (k: int64) =
         let infSeq = n |> Seq.unfold (fun state -> Some(state, sq state))
