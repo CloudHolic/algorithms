@@ -38,12 +38,12 @@ type LazySegmentTree<'T when 'T: equality> =
 
     member this.Init (nums: 'T[]) =
         let rec init k st en = 
-            if st = en then this.node.[k] <- nums.[st - 1]
+            if st = en then this.node[k] <- nums[st - 1]
             else
                 let mid = (st + en) >>> 1
                 (LazySegmentTree<'T>.LeftChild k, st, mid) |||> init
                 (LazySegmentTree<'T>.RightChild k, mid + 1, en) |||> init
-                this.node.[k] <- (this.node.[LazySegmentTree<'T>.LeftChild k], this.node.[LazySegmentTree<'T>.RightChild k]) ||> this.op
+                this.node[k] <- (this.node[LazySegmentTree<'T>.LeftChild k], this.node[LazySegmentTree<'T>.RightChild k]) ||> this.op
 
         init 1 1 this.size
 
@@ -51,7 +51,7 @@ type LazySegmentTree<'T when 'T: equality> =
         let rec query k st en =
             this.Propagate k st en
             if left > en || right < st then this.init
-            else if left <= st && en <= right then this.node.[k]
+            else if left <= st && en <= right then this.node[k]
             else
                 let mid = (st + en) >>> 1
                 ((LazySegmentTree<'T>.LeftChild k, st, mid) |||> query, (LazySegmentTree<'T>.RightChild k, mid + 1, en) |||> query) ||> this.op
@@ -63,29 +63,29 @@ type LazySegmentTree<'T when 'T: equality> =
             this.Propagate k st en
             if left > en || right < st then ()
             else if left <= st && en <= right then
-                this.lazyNodes.[k] <- { mul = mul; add = add }
+                this.lazyNodes[k] <- { mul = mul; add = add }
                 this.Propagate k st en
             else
                 let mid = (st + en) >>> 1
                 (LazySegmentTree<'T>.LeftChild k, st, mid) |||> update
                 (LazySegmentTree<'T>.RightChild k, mid + 1, en) |||> update
-                this.node.[k] <- (this.node.[LazySegmentTree<'T>.LeftChild k], this.node.[LazySegmentTree<'T>.RightChild k]) ||> this.op
+                this.node[k] <- (this.node[LazySegmentTree<'T>.LeftChild k], this.node[LazySegmentTree<'T>.RightChild k]) ||> this.op
 
         update 1 1 this.size
 
     member private this.Propagate index st en =
-        let cur = this.lazyNodes.[index]
+        let cur = this.lazyNodes[index]
         if (cur.mul = fst this.lazyInit && cur.add = snd this.lazyInit) |> not then
-            this.node.[index] <- (this.node.[index], (cur.mul, cur.add)) ||> this.updateOp (en - st + 1)
+            this.node[index] <- (this.node[index], (cur.mul, cur.add)) ||> this.updateOp (en - st + 1)
 
             if st <> en then
-                let left = this.lazyNodes.[LazySegmentTree<'T>.LeftChild index]
-                let right = this.lazyNodes.[LazySegmentTree<'T>.RightChild index]
+                let left = this.lazyNodes[LazySegmentTree<'T>.LeftChild index]
+                let right = this.lazyNodes[LazySegmentTree<'T>.RightChild index]
 
-                this.lazyNodes.[LazySegmentTree<'T>.LeftChild index] <- ((cur.mul, cur.add), (left.mul, left.add)) ||> this.propOp |> function | (a, b) -> { mul = a; add = b }
-                this.lazyNodes.[LazySegmentTree<'T>.RightChild index] <- ((cur.mul, cur.add), (right.mul, right.add)) ||> this.propOp |> function | (a, b) -> { mul = a; add = b }
+                this.lazyNodes[LazySegmentTree<'T>.LeftChild index] <- ((cur.mul, cur.add), (left.mul, left.add)) ||> this.propOp |> function | (a, b) -> { mul = a; add = b }
+                this.lazyNodes[LazySegmentTree<'T>.RightChild index] <- ((cur.mul, cur.add), (right.mul, right.add)) ||> this.propOp |> function | (a, b) -> { mul = a; add = b }
 
-            this.lazyNodes.[index] <- { mul = fst this.lazyInit; add = snd this.lazyInit }
+            this.lazyNodes[index] <- { mul = fst this.lazyInit; add = snd this.lazyInit }
 
 and LazyNode<'T when 'T: equality> = {
     mutable mul: 'T

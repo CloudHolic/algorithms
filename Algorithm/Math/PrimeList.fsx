@@ -9,11 +9,11 @@ let getPrimes nmax =
 
     let mutable m = 1
     while 2 * m + 1 <= nmax do
-        if sieve.[m] then
+        if sieve[m] then
             let n = 2 * m + 1
             if n <= upper then 
                 let mutable i = m
-                while 2 * i < nmax do sieve.[i] <- false; i <- i + n
+                while 2 * i < nmax do sieve[i] <- false; i <- i + n
             result.Add n
         m <- m + 1
 

@@ -14,21 +14,21 @@ type ConvexHullTrick =
         else
             let mutable flag = true
             while this.lines.Count > 0 && flag do
-                let top = this.lines.[this.lines.Count - 1]
+                let top = this.lines[this.lines.Count - 1]
                 let x = this.Intersect top newLine
                 if x <= top.x then this.lines.RemoveAt(this.lines.Count - 1)
                 else flag <- false
 
-            newLine.x <- this.Intersect this.lines.[this.lines.Count - 1] newLine
+            newLine.x <- this.Intersect this.lines[this.lines.Count - 1] newLine
             this.lines.Add(newLine)
 
             if this.pointer >= this.lines.Count then
                 this.pointer <- this.lines.Count - 1
 
     member this.Query x =
-        while this.pointer < this.lines.Count - 1 && this.lines.[this.pointer + 1].x < float x do
+        while this.pointer < this.lines.Count - 1 && this.lines[this.pointer + 1].x < float x do
             this.pointer <- this.pointer + 1
-        this.lines.[this.pointer].eval x
+        this.lines[this.pointer].eval x
 
 and Line = {
     a: int64

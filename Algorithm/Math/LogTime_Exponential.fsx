@@ -11,6 +11,6 @@ let exp n k =
     binaryList
     |> List.mapi (fun i x ->
             match x with
-            | 1 -> expArr.[i]
+            | 1 -> expArr[i]
             | _ -> 1)
     |> List.fold (fun acc x -> acc * x) 1

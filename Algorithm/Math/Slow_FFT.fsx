@@ -35,8 +35,8 @@ module FastFourierTransform =
         let size = Array.length arr1 + Array.length arr2 - 1
         let size = Math.Pow(2., (Math.Log (float size) / Math.Log 2.) |> Math.Ceiling) |> int
 
-        let coeff1 = Array.init size (fun i -> if i < Array.length arr1 then Complex(float arr1.[i], 0.) else Complex(0., 0.))
-        let coeff2 = Array.init size (fun i -> if i < Array.length arr2 then Complex(float arr2.[i], 0.) else Complex(0., 0.))
+        let coeff1 = Array.init size (fun i -> if i < Array.length arr1 then Complex(float arr1[i], 0.) else Complex(0., 0.))
+        let coeff2 = Array.init size (fun i -> if i < Array.length arr2 then Complex(float arr2[i], 0.) else Complex(0., 0.))
 
         (fft coeff1 false, fft coeff2 false)
         ||> Array.map2 (fun x y -> x * y)

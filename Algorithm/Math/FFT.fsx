@@ -20,11 +20,11 @@ module FastFourierTransform =
                 for i in 0 .. ln .. n - 1 do
                     let mutable w = Complex(1., 0.)
                     for j = 0 to ln / 2 - 1 do
-                        let u = result.[i + j]
-                        let v = result.[i + j + ln / 2] * w
+                        let u = result[i + j]
+                        let v = result[i + j + ln / 2] * w
 
-                        result.[i + j] <- u + v
-                        result.[i + j + ln / 2] <- u - v
+                        result[i + j] <- u + v
+                        result[i + j + ln / 2] <- u - v
 
                         w <- w * roots
 
@@ -39,9 +39,9 @@ module FastFourierTransform =
             j <- j + bit
 
             if i < j then
-                let temp = result.[i]
-                result.[i] <- result.[j]
-                result.[j] <- temp
+                let temp = result[i]
+                result[i] <- result[j]
+                result[j] <- temp
 
         loop 2 invert
         if invert then result |> Array.map (fun i -> i / Complex(float n, 0.)) else result
@@ -57,8 +57,8 @@ module FastFourierTransform =
 
         let size = Array.length arr1 + Array.length arr2 - 1 |> LeastSquare
 
-        let coeff1 = Array.init size (fun i -> if i < Array.length arr1 then Complex(float arr1.[i], 0.) else Complex(0., 0.))
-        let coeff2 = Array.init size (fun i -> if i < Array.length arr2 then Complex(float arr2.[i], 0.) else Complex(0., 0.))
+        let coeff1 = Array.init size (fun i -> if i < Array.length arr1 then Complex(float arr1[i], 0.) else Complex(0., 0.))
+        let coeff2 = Array.init size (fun i -> if i < Array.length arr2 then Complex(float arr2[i], 0.) else Complex(0., 0.))
 
         (fft coeff1 false, fft coeff2 false)
         ||> Array.map2 (fun x y -> x * y)

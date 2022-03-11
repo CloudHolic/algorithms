@@ -4,7 +4,7 @@ let binSearch arr target =
         | 0 -> -1
         | i -> 
             let middle = i / 2
-            match sign <| compare target arr.[middle] with
+            match sign <| compare target arr[middle] with
             | 0  -> middle + pos
             | -1 -> inner arr[.. middle - 1] pos
             | _  -> inner arr[middle + 1 ..] (pos + middle + 1)

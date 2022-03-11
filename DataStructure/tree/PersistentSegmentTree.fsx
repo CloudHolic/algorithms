@@ -27,58 +27,58 @@ type PersistentSegmentTree<'T> =
             if st <> en then
                 let mid = (st + en) >>> 1
 
-                this.nodes.[k].Left <- this.nodes.Count
+                this.nodes[k].Left <- this.nodes.Count
                 Node<'T>.CreateNew this.init |> this.nodes.Add
 
-                this.nodes.[k].Right <- this.nodes.Count
+                this.nodes[k].Right <- this.nodes.Count
                 Node<'T>.CreateNew this.init |> this.nodes.Add
 
-                (this.nodes.[k].Left, st, mid) |||> init
-                (this.nodes.[k].Right, mid + 1, en) |||> init
+                (this.nodes[k].Left, st, mid) |||> init
+                (this.nodes[k].Right, mid + 1, en) |||> init
 
-        this.roots.[0] <- 1
+        this.roots[0] <- 1
         this.nodes.AddRange([|Node<'T>.CreateNew this.init; Node<'T>.CreateNew this.init|])
         init 1 1 this.maxSize
 
     member this.Query root left right =
         let rec query k st en =
             if left > en || right < st then this.init
-            else if left <= st && en <= right then this.nodes.[k].Value
+            else if left <= st && en <= right then this.nodes[k].Value
             else
                 let mid = (st + en) >>> 1
-                ((this.nodes.[k].Left, st, mid) |||> query, (this.nodes.[k].Right, mid + 1, en) |||> query) ||> this.op
+                ((this.nodes[k].Left, st, mid) |||> query, (this.nodes[k].Right, mid + 1, en) |||> query) ||> this.op
 
-        query this.roots.[root] 1 this.maxSize
+        query this.roots[root] 1 this.maxSize
 
     member this.Update root index value =
         let AddRoot() =
-            let prevRoot = this.roots.[this.lastRoot]
-            this.nodes.Add({ Value = this.nodes.[prevRoot].Value; Left = this.nodes.[prevRoot].Left; Right = this.nodes.[prevRoot].Right })
+            let prevRoot = this.roots[this.lastRoot]
+            this.nodes.Add({ Value = this.nodes[prevRoot].Value; Left = this.nodes[prevRoot].Left; Right = this.nodes[prevRoot].Right })
             this.lastRoot <- this.lastRoot + 1
-            this.roots.[this.lastRoot] <- this.nodes.Count - 1
+            this.roots[this.lastRoot] <- this.nodes.Count - 1
 
         let rec update k st en =
             if st <> en then
                 let mid = (st + en) >>> 1
                 if index <= mid then
-                    let now = this.nodes.[k].Left
-                    let newValue = (this.nodes.[now].Value, value) ||> this.op
-                    this.nodes.Add({ Value = newValue; Left = this.nodes.[now].Left; Right = this.nodes.[now].Right })
-                    this.nodes.[k].Left <- this.nodes.Count - 1
-                    (this.nodes.[k].Left, st, mid) |||> update
+                    let now = this.nodes[k].Left
+                    let newValue = (this.nodes[now].Value, value) ||> this.op
+                    this.nodes.Add({ Value = newValue; Left = this.nodes[now].Left; Right = this.nodes[now].Right })
+                    this.nodes[k].Left <- this.nodes.Count - 1
+                    (this.nodes[k].Left, st, mid) |||> update
                 else
-                    let now = this.nodes.[k].Right
-                    let newValue = (this.nodes.[now].Value, value) ||> this.op
-                    this.nodes.Add({ Value = newValue; Left = this.nodes.[now].Left; Right = this.nodes.[now].Right })
-                    this.nodes.[k].Right <- this.nodes.Count - 1
-                    (this.nodes.[k].Right, mid + 1, en) |||> update
+                    let now = this.nodes[k].Right
+                    let newValue = (this.nodes[now].Value, value) ||> this.op
+                    this.nodes.Add({ Value = newValue; Left = this.nodes[now].Left; Right = this.nodes[now].Right })
+                    this.nodes[k].Right <- this.nodes.Count - 1
+                    (this.nodes[k].Right, mid + 1, en) |||> update
 
         if root > this.lastRoot then
             for _ = 1 to root - this.lastRoot do
                 AddRoot()
 
-        this.nodes.[this.roots.[root]].Value <- (this.nodes.[this.roots.[root]].Value, value) ||> this.op
-        update this.roots.[root] 1 this.maxSize
+        this.nodes[this.roots[root]].Value <- (this.nodes[this.roots[root]].Value, value) ||> this.op
+        update this.roots[root] 1 this.maxSize
 
     member this.Clear() =
         Array.Clear(this.roots, 0, this.rootCount + 1)

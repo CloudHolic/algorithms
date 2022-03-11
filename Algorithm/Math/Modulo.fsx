@@ -22,7 +22,7 @@ module Modulo =
         binaryList
         |> List.mapi (fun i x ->
             match x with
-            | 1L -> expArr.[i]
+            | 1L -> expArr[i]
             | _ -> 1L)
         |> List.fold (fun acc x -> mul acc x) 1L
       

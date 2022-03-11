@@ -14,21 +14,21 @@ type LiChao =
         let rec query k =
             if k = -1 then this.Inf
             else
-                let cur = this.node.[k]
+                let cur = this.node[k]
                 let mid = (cur.st + cur.en) >>> 1
 
                 if x <= mid then 
-                    (this.node.[k].line.eval x, query this.node.[k].left) ||> min
-                else (this.node.[k].line.eval x, query this.node.[k].right) ||> min
+                    (this.node[k].line.eval x, query this.node[k].left) ||> min
+                else (this.node[k].line.eval x, query this.node[k].right) ||> min
 
         query 0
 
     member this.AddLine (line: Line) =
         let rec add (l: Line) k =
-            let cur = this.node.[k]
+            let cur = this.node[k]
             let mid = (cur.st + cur.en) >>> 1
 
-            let mutable lowLine = this.node.[k].line
+            let mutable lowLine = this.node[k].line
             let mutable highLine = l
 
             if lowLine.eval cur.st > highLine.eval cur.st then
@@ -37,21 +37,21 @@ type LiChao =
                 highLine <- temp
 
             if lowLine.eval cur.en <= highLine.eval cur.en then
-                this.node.[k].line <- lowLine
+                this.node[k].line <- lowLine
             else if lowLine.eval mid > highLine.eval mid then
-                this.node.[k].line <- highLine
-                if this.node.[k].left = -1 then
-                    this.node.[k].left <- this.node.Count
+                this.node[k].line <- highLine
+                if this.node[k].left = -1 then
+                    this.node[k].left <- this.node.Count
                     this.node.Add { left = -1; right = -1; st = cur.st; en = mid; line = { a = 0L; b = this.Inf }}
 
-                (lowLine, this.node.[k].left) ||> add
+                (lowLine, this.node[k].left) ||> add
             else 
-                this.node.[k].line <- lowLine
-                if this.node.[k].right = -1 then
-                    this.node.[k].right <- this.node.Count
+                this.node[k].line <- lowLine
+                if this.node[k].right = -1 then
+                    this.node[k].right <- this.node.Count
                     this.node.Add { left = -1; right = -1; st = mid + 1L; en = cur.en; line = { a = 0L; b = this.Inf }}
 
-                (highLine, this.node.[k].right) ||> add
+                (highLine, this.node[k].right) ||> add
 
         add line 0
 

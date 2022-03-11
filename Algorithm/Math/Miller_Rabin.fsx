@@ -14,7 +14,7 @@ let millerRabin (n: int64) =
         binaryList
         |> List.mapi (fun i x ->
             match x with
-            | 1L -> expArr.[i]
+            | 1L -> expArr[i]
             | _ -> 1I)
         |> List.fold (fun acc x -> mul acc x) 1I
         
