@@ -4,7 +4,7 @@
 
 rbt::rbt() : root_(nullptr) {}
 
-rbt:: rbt(const rbt& prev) : root_(nullptr)
+rbt::rbt(const rbt& prev) : root_(nullptr)
 {
     root_ = copy(prev.root_);
 }
@@ -49,10 +49,10 @@ rbt& rbt::operator=(rbt&& prev) noexcept
 
 void rbt::insert(const int value)
 {
-    node* new_node = new node(value);
+	const auto new_node = new node(value);
     if (root_ == nullptr)
     {
-        new_node->color = BLACK;
+        new_node->color = black;
         root_ = new_node;
     }
     else
@@ -84,7 +84,7 @@ void rbt::remove(const int value)
     node* replace = find_replaceable(target);
     node* parent = target->parent;
 
-    bool both_black = target->color == BLACK && (replace == nullptr || replace->color == BLACK);
+    const bool both_black = target->color == black && (replace == nullptr || replace->color == black);
 
     if (replace == nullptr)
     {
@@ -96,7 +96,7 @@ void rbt::remove(const int value)
                 fix_double_black(target);
             else
                 if (target->sibling() != nullptr)
-                    target->sibling()->color = RED;
+                    target->sibling()->color = red;
 
             if (target->is_left())
                 parent->left = nullptr;
@@ -127,7 +127,7 @@ void rbt::remove(const int value)
             if (both_black)
                 fix_double_black(replace);
             else
-                replace->color = BLACK;
+                replace->color = black;
         }
     }
     else
@@ -195,14 +195,14 @@ vector<int> rbt::levelorder() const
     return result;
 }
 
-void rbt::clear()
+void rbt::clear() const
 {
     internal_clear(root_);
 }
 
-rbt::node* rbt::copy(const node* root) const
+rbt::node* rbt::copy(const node* root)
 {
-    node* new_node = new node(root->data);
+	const auto new_node = new node(root->data);
 
     if (root->left != nullptr)
     {
@@ -220,30 +220,29 @@ rbt::node* rbt::copy(const node* root) const
 
 rbt::node* rbt::search(const int value) const
 {
-    node* temp = root_;
+	node* temp = root_;
     while (temp != nullptr)
     {
         if (value < temp->data)
         {
-            if (temp->left != nullptr)
+            if (temp->left == nullptr)
                 break;
-            else
-                temp = temp->left;
+            temp = temp->left;
         }
         else if (value > temp->data)
-
         {
-            if (temp->right != nullptr)
+            if (temp->right == nullptr)
                 break;
-            else
-                temp = temp->right;
+            temp = temp->right;
         }
         else
             break;
     }
+
+    return temp;
 }
 
-rbt::node* rbt::find_replaceable(node* target)
+rbt::node* rbt::find_replaceable(const node* target)
 {
     if (target->left != nullptr && target->right != nullptr)
     {
@@ -267,7 +266,7 @@ void rbt::fix_double_red(node* target)
 {
     if (target == root_)
     {
-        target->color = BLACK;
+        target->color = black;
         return;
     }
 
@@ -275,21 +274,21 @@ void rbt::fix_double_red(node* target)
     node* grandparent = target->parent->parent;
     node* uncle = target->uncle();
 
-    if (parent->color != BLACK)
+    if (parent->color != black)
     {
-        if (uncle != nullptr && uncle->color == RED)
+        if (uncle != nullptr && uncle->color == red)
         {
-            parent->color = BLACK;
-            uncle->color = BLACK;
-            grandparent->color = RED;
+            parent->color = black;
+            uncle->color = black;
+            grandparent->color = red;
             fix_double_red(grandparent);
         }
         else
         {
             if (parent->is_left())
             {
-                if (target->is_left())                
-                    swap_color(parent, grandparent);                
+                if (target->is_left())
+                    swap_color(parent, grandparent);
                 else
                 {
                     left_rotate(parent);
@@ -326,10 +325,10 @@ void rbt::fix_double_black(node* target)
         fix_double_black(parent);
     else
     {
-        if (sibling->color == RED)
+        if (sibling->color == red)
         {
-            parent->color = RED;
-            sibling->color = BLACK;
+            parent->color = red;
+            sibling->color = black;
 
             if (sibling->is_left())
                 right_rotate(parent);
@@ -340,7 +339,7 @@ void rbt::fix_double_black(node* target)
         }
         else
         {
-            if (sibling->left != nullptr && sibling->left->color == RED)
+            if (sibling->left != nullptr && sibling->left->color == red)
             {
                 if (sibling->is_left())
                 {
@@ -355,9 +354,9 @@ void rbt::fix_double_black(node* target)
                     left_rotate(parent);
                 }
 
-                parent->color = BLACK;
+                parent->color = black;
             }
-            else if (sibling->right != nullptr && sibling->right->color == RED)
+            else if (sibling->right != nullptr && sibling->right->color == red)
             {
                 if (sibling->is_left())
                 {
@@ -372,15 +371,15 @@ void rbt::fix_double_black(node* target)
                     left_rotate(parent);
                 }
 
-                parent->color = BLACK;
+                parent->color = black;
             }
             else
             {
-                sibling->color = RED;
-                if (parent->color == BLACK)
+                sibling->color = red;
+                if (parent->color == black)
                     fix_double_black(parent);
                 else
-                    parent->color = BLACK;
+                    parent->color = black;
             }
         }
     }
@@ -396,7 +395,7 @@ void rbt::left_rotate(node* target)
     target->move_down(new_parent);
 
     target->right = new_parent->left;
-    if (new_parent != nullptr)
+    if (new_parent != nullptr && new_parent->left != nullptr)
         new_parent->left->parent = target;
 
     new_parent->left = target;
@@ -412,7 +411,7 @@ void rbt::right_rotate(node* target)
     target->move_down(new_parent);
 
     target->left = new_parent->right;
-    if (new_parent != nullptr)
+    if (new_parent != nullptr && new_parent->right != nullptr)
         new_parent->right->parent = target;
 
     new_parent->right = target;
@@ -420,14 +419,14 @@ void rbt::right_rotate(node* target)
 
 void rbt::swap_color(node* target1, node* target2)
 {
-    node_color temp = target1->color;
+	const node_color temp = target1->color;
     target1->color = target2->color;
     target2->color = temp;
 }
 
 void rbt::swap_value(node* target1, node* target2)
 {
-    int temp = target1->data;
+	const int temp = target1->data;
     target1->data = target2->data;
     target2->data = temp;
 }
@@ -455,32 +454,31 @@ void rbt::internal_clear(node* root)
 rbt::node::node(int value) : data(value)
 {
     left = right = parent = nullptr;
-    color = RED;
+    color = red;
 }
 
-rbt::node* rbt::node::uncle()
+rbt::node* rbt::node::uncle() const
 {
     if (parent == nullptr || parent->parent == nullptr)
         return nullptr;
 
     if (parent->is_left())
         return parent->parent->right;
-    else
-        return parent->parent->left;
+    return parent->parent->left;
 }
 
-rbt::node* rbt::node::sibling()
+rbt::node* rbt::node::sibling() const
 {
     if (parent == nullptr)
         return nullptr;
 
     if (is_left())
         return parent->right;
-    
+
     return parent->left;
 }
 
-bool rbt::node::is_left()
+bool rbt::node::is_left() const
 {
     return this == parent->left;
 }
@@ -492,7 +490,7 @@ void rbt::node::move_down(node* new_parent)
         if (is_left())
             parent->left = new_parent;
         else
-            parent->right = new_parent;        
+            parent->right = new_parent;
     }
 
     new_parent->parent = parent;
